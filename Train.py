@@ -32,7 +32,7 @@ for episode in range(20000):
     state, _ = env.reset()
     done         = False
     total_reward = 0.0
-    score        = 0  # съеденная еда
+    score        = 0  
 
     while not done:
 
@@ -52,7 +52,6 @@ for episode in range(20000):
         state         = next_state
         total_reward += reward
 
-        # обучение
         if len(buffer) > batch_size:
             s, a, r, ns, d = buffer.sample(batch_size)
 

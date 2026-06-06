@@ -11,10 +11,8 @@ class SnakeEnv(gym.Env):
         self.w = w
         self.h = h
 
-        # 0=вверх 1=вниз 2=влево 3=вправо
         self.action_space = spaces.Discrete(4)
 
-        # 3 канала: змейка, голова, еда
         self.observation_space = spaces.Box(
             low=0, high=1,
             shape=(3, h, w),
@@ -28,7 +26,7 @@ class SnakeEnv(gym.Env):
 
         cx, cy = self.w // 2, self.h // 2
         self.snake = [(cx, cy), (cx - 1, cy), (cx - 2, cy)]
-        self.direction = 3  # вправо
+        self.direction = 3  
         self.spawn_food()
         self.steps = 0
         self.max_steps = self.w * self.h * 2
@@ -45,7 +43,7 @@ class SnakeEnv(gym.Env):
         self.food = random.choice(empty) if empty else (0, 0)
 
     def step(self, action):
-        # запрет разворота на 180
+        
         opposite = {0: 1, 1: 0, 2: 3, 3: 2}
         if action != opposite[self.direction]:
             self.direction = action
@@ -56,23 +54,20 @@ class SnakeEnv(gym.Env):
 
         self.steps += 1
 
-        # стена
         if nx < 0 or nx >= self.w or ny < 0 or ny >= self.h:
             return self._get_state(), -1.0, True, False, {}
 
-        # сама себя
         if (nx, ny) in self.snake[:-1]:
             return self._get_state(), -1.0, True, False, {}
 
         self.snake.insert(0, (nx, ny))
 
-        # еда
         if (nx, ny) == self.food:
             reward = 1.0
             self.spawn_food()
         else:
             self.snake.pop()
-            # небольшая награда за приближение к еде
+            
             old_dist = abs(hx - self.food[0]) + abs(hy - self.food[1])
             new_dist = abs(nx - self.food[0]) + abs(ny - self.food[1])
             reward = 0.01 if new_dist < old_dist else -0.01
@@ -84,15 +79,12 @@ class SnakeEnv(gym.Env):
     def _get_state(self):
         state = np.zeros((3, self.h, self.w), dtype=np.float32)
 
-        # канал 0 — тело змейки
         for x, y in self.snake:
             state[0, y, x] = 1.0
 
-        # канал 1 — голова
         hx, hy = self.snake[0]
         state[1, hy, hx] = 1.0
 
-        # канал 2 — еда
         fx, fy = self.food
         state[2, fy, fx] = 1.0
 

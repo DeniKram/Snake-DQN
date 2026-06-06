@@ -6,9 +6,9 @@ import sys
 from DQN import DQN
 import Snake
 
-# ───── настройки ─────
-CELL   = 40          # пикселей на клетку
-FPS    = 10          # кадров в секунду
+
+CELL   = 40          
+FPS    = 10          
 W, H   = 10, 10
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -78,4 +78,4 @@ while not done:
 pygame.quit()
 
 imageio.mimsave("snake.gif", frames, fps=FPS, loop=0)
-print(f"Готово! Score: {score} | Кадров: {len(frames)}")
+print(f"Score: {score} | FPS: {len(frames)}")
